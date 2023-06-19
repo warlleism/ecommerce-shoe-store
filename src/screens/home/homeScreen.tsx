@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { SneakersArray } from "../../productData/productData";
 import Icon from "react-native-vector-icons/AntDesign";
@@ -7,14 +7,50 @@ import LocaleScreen from '../../components/locale/locale';
 import NavBar from '../../components/navBar/navBar';
 import { useNavigation } from '@react-navigation/native';
 
+interface Sneaker {
+    id: number;
+    img: string;
+    name: string;
+    price: number;
+    favorite: boolean;
+    category: string;
+}
+
 const HomeScreen = () => {
 
-    const [searchValue, setSearchValue] = useState('');
-
+    const [searchValue, setSearchValue] = useState<string>("");
+    const [sneakers, setSneakers] = useState<Sneaker[]>(SneakersArray);
+    const [filterSneakers, setFilterSneakers] = useState<Sneaker[]>([]);
     const navigation = useNavigation();
 
+    const setFavorite = (event: boolean, id: number) => {
+        setSneakers((prevSneakers) => {
+            const updatedSneakers = prevSneakers.map((sneaker) => {
+                if (sneaker.id === id) {
+                    return {
+                        ...sneaker,
+                        favorite: event,
+                    };
+                }
+                return sneaker;
+            });
+            return updatedSneakers;
+        });
+    };
+
+
+    const handleSearch = (text: any) => {
+        setSearchValue(text);
+        if (text.length === 0) {
+            setFilterSneakers([])
+        } else {
+            const filteredItems = sneakers.filter(item => item.name.toLowerCase().includes(text.toLowerCase()));
+            setFilterSneakers(filteredItems);
+        }
+    };
+
     return (
-        <>
+        <View>
             <ScrollView style={{ paddingHorizontal: 20, backgroundColor: "#fff" }}>
 
                 <View style={styles.header}>
@@ -26,6 +62,18 @@ const HomeScreen = () => {
                     <Image source={require('../../../assets/logo.png')} />
                     <TouchableOpacity style={styles.menuButton}>
                         <Bag name="shopping-bag" size={23} color={"#262626"} style={styles.bagIcon} />
+                        <Text style={{
+                            textAlign: 'center',
+                            fontWeight: "500",
+                            width: 20,
+                            height: 20,
+                            position: 'absolute',
+                            top: -10,
+                            right: 0,
+                            backgroundColor: "#fd2e2e",
+                            borderRadius: 100,
+                            color: "#fff"
+                        }}>1</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -37,7 +85,7 @@ const HomeScreen = () => {
                         style={styles.searchInput}
                         placeholder="Nike Balance 574 "
                         value={searchValue}
-                        onChangeText={setSearchValue}
+                        onChangeText={handleSearch}
                     />
                 </View>
 
@@ -71,40 +119,73 @@ const HomeScreen = () => {
                 </ScrollView>
 
                 <View>
-                    <TouchableOpacity style={{ marginBottom: 16 }}>
-                        <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Novos Lançamentos</Text>
+                    <TouchableOpacity style={{ marginBottom: 16 }} onPress={() => navigation.navigate("ProductList" as never)}>
+                        <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Todos Lançamentos</Text>
                     </TouchableOpacity>
 
-                    <View style={styles.sneakersContainer}>
-                        {SneakersArray.map((e) => { // Retorna apenas os sneakers com ID menor ou igual a 6
-                            if (e.id <= 6) {// Retornando apenas 6 tenis
-                                return (
-                                    <TouchableOpacity key={e.id} style={styles.sneakerItem} onPress={() => navigation.navigate("ProductList" as never)}>
-                                        <View style={styles.sneakerImageContainer}>
-                                            <Image source={e.img} style={styles.sneakerImage} />
-                                            <TouchableOpacity style={styles.favoriteButton}>
+                    {
+                        filterSneakers.length > 0 ?
+                            <View style={styles.sneakersContainer}>
+                                {filterSneakers.map((e: any) => {
+                                    return (
+                                        <TouchableOpacity key={e.id} style={styles.sneakerItem}>
+                                            <View style={styles.sneakerImageContainer}>
+                                                <Image source={e.img} style={styles.sneakerImage} />
                                                 {e.favorite === true ? (
-                                                    <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                    <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(false, e.id)}>
+                                                        <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                    </TouchableOpacity>
                                                 ) : (
-                                                    <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
+                                                    <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(true, e.id)}>
+                                                        <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
+                                                    </TouchableOpacity>
                                                 )}
+                                            </View>
+                                            <Text style={styles.sneakerName}>{e.name}</Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </View>
+                            :
+                            <View style={styles.sneakersContainer}>
+                                {sneakers.map((e: any) => {
+                                    if (e.category && e.category.toLowerCase() === "new arrival") {
+                                        return (
+                                            <TouchableOpacity key={e.id} style={styles.sneakerItem}>
+                                                <View style={styles.sneakerImageContainer}>
+                                                    <Image source={e.img} style={styles.sneakerImage} />
+                                                    {e.favorite === true ? (
+                                                        <TouchableOpacity
+                                                            style={styles.favoriteButton}
+                                                            onPress={() => setFavorite(false, e.id)}
+                                                        >
+                                                            <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                        </TouchableOpacity>
+                                                    ) : (
+                                                        <TouchableOpacity
+                                                            style={styles.favoriteButton}
+                                                            onPress={() => setFavorite(true, e.id)}
+                                                        >
+                                                            <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
+                                                        </TouchableOpacity>
+                                                    )}
+                                                </View>
+                                                <Text style={styles.sneakerName}>{e.name}</Text>
+                                                <Text style={styles.sneakerName}>{e.category}</Text>
                                             </TouchableOpacity>
-                                        </View>
-                                        <Text style={styles.sneakerName}>{e.name}</Text>
-                                    </TouchableOpacity>
-                                );
-                            } else {
-                                return null;
-                            }
-                        })}
-                    </View>
+                                        );
+                                    } else {
+                                        return null;
+                                    }
+                                })}
+                            </View>
+                    }
                 </View>
-
 
             </ScrollView>
 
-            <NavBar />
-        </>
+            {/* <NavBar /> */}
+        </View>
     );
 }
 
