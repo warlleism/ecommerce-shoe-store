@@ -6,6 +6,7 @@ import Bag from "react-native-vector-icons/Feather";
 import LocaleScreen from '../../components/locale/locale';
 import NavBar from '../../components/navBar/navBar';
 import { useNavigation } from '@react-navigation/native';
+import Menu from '../../components/menu/menu';
 
 interface Sneaker {
     id: number;
@@ -24,6 +25,18 @@ const HomeScreen = () => {
     const navigation = useNavigation();
 
     const setFavorite = (event: boolean, id: number) => {
+        setFilterSneakers((prevSneakers) => {
+            const updatedSneakers = prevSneakers.map((sneaker) => {
+                if (sneaker.id === id) {
+                    return {
+                        ...sneaker,
+                        favorite: event,
+                    };
+                }
+                return sneaker;
+            });
+            return updatedSneakers;
+        });
         setSneakers((prevSneakers) => {
             const updatedSneakers = prevSneakers.map((sneaker) => {
                 if (sneaker.id === id) {
@@ -50,7 +63,9 @@ const HomeScreen = () => {
     };
 
     return (
-        <View>
+        <View style={{ flex: 1 }}>
+            {/* <Menu /> */}
+
             <ScrollView style={{ paddingHorizontal: 20, backgroundColor: "#fff" }}>
 
                 <View style={styles.header}>
@@ -119,9 +134,12 @@ const HomeScreen = () => {
                 </ScrollView>
 
                 <View>
-                    <TouchableOpacity style={{ marginBottom: 16 }} onPress={() => navigation.navigate("ProductList" as never)}>
-                        <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Todos Lançamentos</Text>
-                    </TouchableOpacity>
+                    <View style={{ marginBottom: 16, display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Lançamentos</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate("ProductList" as never)}>
+                            <Text style={{ fontWeight: "700", color: "#27875D", fontSize: 16, letterSpacing: -1.3 }}>Ver todos</Text>
+                        </TouchableOpacity>
+                    </View>
 
                     {
                         filterSneakers.length > 0 ?
@@ -183,8 +201,7 @@ const HomeScreen = () => {
                 </View>
 
             </ScrollView>
-
-            {/* <NavBar /> */}
+            <NavBar />
         </View>
     );
 }

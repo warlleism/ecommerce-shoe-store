@@ -21,17 +21,21 @@ const ProductList = () => {
 
     const navigation = useNavigation();
 
-    useEffect(() => {
-        function filterProducts() {
-            const filter = sneakers.filter((e: Sneaker) => e.name.includes(searchValue));
-            setFilterSneakers(filter);
-        }
-        filterProducts();
-    }, [searchValue]);
-
     const setFavorite = (event: boolean, id: number) => {
-        setSneakers((prevSneakers: Sneaker[]) => {
-            const updatedSneakers = prevSneakers.map((sneaker: Sneaker) => {
+        setFilterSneakers((prevSneakers) => {
+            const updatedSneakers = prevSneakers.map((sneaker) => {
+                if (sneaker.id === id) {
+                    return {
+                        ...sneaker,
+                        favorite: event,
+                    };
+                }
+                return sneaker;
+            });
+            return updatedSneakers;
+        });
+        setSneakers((prevSneakers) => {
+            const updatedSneakers = prevSneakers.map((sneaker) => {
                 if (sneaker.id === id) {
                     return {
                         ...sneaker,
@@ -43,6 +47,7 @@ const ProductList = () => {
             return updatedSneakers;
         });
     };
+
 
     const handleSearch = (text: any) => {
         setSearchValue(text);
@@ -61,7 +66,8 @@ const ProductList = () => {
                     <Icon name="arrowleft" size={30} color={"#3d3d3d"} style={styles.favoriteIcon} />
                 </TouchableOpacity>
 
-                <Text style={{ color: "#3d3d3d", fontSize: 30, fontWeight: "400" }}>Produtos</Text>
+                <Image source={require('../../../assets/logo.png')} />
+
                 <View></View>
             </View>
 
@@ -77,10 +83,37 @@ const ProductList = () => {
                 />
             </View>
 
+            <View style={{ marginBottom: 16, display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Lançamentos</Text>
+            </View>
+
             {
-                <View style={styles.sneakersContainer}>
-                    {sneakers.map((e: any) => {
-                        if (e.category && e.category.toLowerCase() === "new arrival") {
+                filterSneakers.length > 0 ?
+                    <View style={styles.sneakersContainer}>
+                        {filterSneakers.map((e: any) => {
+                            return (
+                                <TouchableOpacity key={e.id} style={styles.sneakerItem}>
+                                    <View style={styles.sneakerImageContainer}>
+                                        <Image source={e.img} style={styles.sneakerImage} />
+                                        {e.favorite === true ? (
+                                            <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(false, e.id)}>
+                                                <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(true, e.id)}>
+                                                <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+                                    <Text style={styles.sneakerName}>{e.name}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+                    :
+                    <View style={styles.sneakersContainer}>
+                        {sneakers.map((e: any) => {
+
                             return (
                                 <TouchableOpacity key={e.id} style={styles.sneakerItem}>
                                     <View style={styles.sneakerImageContainer}>
@@ -102,13 +135,11 @@ const ProductList = () => {
                                         )}
                                     </View>
                                     <Text style={styles.sneakerName}>{e.name}</Text>
+                                    <Text style={styles.sneakerName}>{e.category}</Text>
                                 </TouchableOpacity>
                             );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </View>
+                        })}
+                    </View>
             }
 
         </ScrollView>

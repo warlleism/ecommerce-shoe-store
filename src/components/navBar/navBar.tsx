@@ -16,7 +16,7 @@ const NavBar = () => {
             flexDirection: "row",
             paddingHorizontal: 20,
             justifyContent: "space-between",
-            width: "60%",
+            width: "70%",
             height: 65,
             alignSelf: "center",
             borderRadius: 100,
