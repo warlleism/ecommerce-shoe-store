@@ -4,97 +4,107 @@ import { SneakersArray } from "../../productData/productData";
 import Icon from "react-native-vector-icons/AntDesign";
 import Bag from "react-native-vector-icons/Feather";
 import LocaleScreen from '../../components/locale/locale';
+import NavBar from '../../components/navBar/navBar';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
+
     const [searchValue, setSearchValue] = useState('');
 
+    const navigation = useNavigation();
+
     return (
-        <ScrollView style={{ paddingHorizontal: 20 }}>
+        <>
+            <ScrollView style={{ paddingHorizontal: 20, backgroundColor: "#fff" }}>
 
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.menuButton}>
-                    <View style={styles.menuIcon} />
-                    <View style={styles.menuIcon} />
-                    <View style={styles.menuIcon} />
-                </TouchableOpacity>
-                <Image source={require('../../../assets/logo.png')} />
-                <TouchableOpacity style={styles.menuButton}>
-                    <Bag name="shopping-bag" size={23} color={"#262626"} style={styles.bagIcon} />
-                </TouchableOpacity>
-            </View>
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.menuButton}>
+                        <View style={styles.menuIcon} />
+                        <View style={styles.menuIcon} />
+                        <View style={styles.menuIcon} />
+                    </TouchableOpacity>
+                    <Image source={require('../../../assets/logo.png')} />
+                    <TouchableOpacity style={styles.menuButton}>
+                        <Bag name="shopping-bag" size={23} color={"#262626"} style={styles.bagIcon} />
+                    </TouchableOpacity>
+                </View>
 
-            <View style={styles.searchContainer}>
-                <TouchableOpacity style={{ paddingHorizontal: 5 }}>
-                    <Icon name="search1" size={20} color="#333" />
-                </TouchableOpacity>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Nike Balance 574 "
-                    value={searchValue}
-                    onChangeText={setSearchValue}
-                />
-            </View>
+                <View style={styles.searchContainer}>
+                    <TouchableOpacity style={{ paddingHorizontal: 5 }}>
+                        <Icon name="search1" size={20} color="#333" />
+                    </TouchableOpacity>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Nike Balance 574 "
+                        value={searchValue}
+                        onChangeText={setSearchValue}
+                    />
+                </View>
 
-            <LocaleScreen />
+                <LocaleScreen />
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container}>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-nike.png')} style={styles.image} />
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.container}>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-nike.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-adidas.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-nb.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-vans.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-nike.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-adidas.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-nb.png')} style={styles.image} />
+                    </View>
+                    <View style={styles.itemContainer}>
+                        <Image source={require('../../../assets/logo-vans.png')} style={styles.image} />
+                    </View>
+                </ScrollView>
+
+                <View>
+                    <TouchableOpacity style={{ marginBottom: 16 }}>
+                        <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Novos Lançamentos</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.sneakersContainer}>
+                        {SneakersArray.map((e) => { // Retorna apenas os sneakers com ID menor ou igual a 6
+                            if (e.id <= 6) {// Retornando apenas 6 tenis
+                                return (
+                                    <TouchableOpacity key={e.id} style={styles.sneakerItem} onPress={() => navigation.navigate("ProductList" as never)}>
+                                        <View style={styles.sneakerImageContainer}>
+                                            <Image source={e.img} style={styles.sneakerImage} />
+                                            <TouchableOpacity style={styles.favoriteButton}>
+                                                {e.favorite === true ? (
+                                                    <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                ) : (
+                                                    <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
+                                                )}
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={styles.sneakerName}>{e.name}</Text>
+                                    </TouchableOpacity>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </View>
                 </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-adidas.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-nb.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-vans.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-nike.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-adidas.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-nb.png')} style={styles.image} />
-                </View>
-                <View style={styles.itemContainer}>
-                    <Image source={require('../../../assets/logo-vans.png')} style={styles.image} />
-                </View>
+
+
             </ScrollView>
 
-            <View>
-                <TouchableOpacity style={{ marginBottom: 16 }}>
-                    <Text style={{ fontWeight: "400", color: "#212121", fontSize: 18 }}>Novos Lançamentos</Text>
-                </TouchableOpacity>
-
-                <View style={styles.sneakersContainer}>
-                    {SneakersArray.map((e) => { // Retorna apenas os sneakers com ID menor ou igual a 6
-                        if (e.id <= 6) {// Retornando apenas 6 tenis
-                            return (
-                                <TouchableOpacity key={e.id} style={styles.sneakerItem}>
-                                    <View style={styles.sneakerImageContainer}>
-                                        <Image source={e.img} style={styles.sneakerImage} />
-                                        <TouchableOpacity style={styles.favoriteButton}>
-                                            {e.favorite === true ? (
-                                                <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
-                                            ) : (
-                                                <Icon name="hearto" size={23} color={"#ccc"} style={styles.favoriteIcon} />
-                                            )}
-                                        </TouchableOpacity>
-                                    </View>
-                                    <Text style={styles.sneakerName}>{e.name}</Text>
-                                </TouchableOpacity>
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </View>
-            </View>
-
-        </ScrollView>
+            <NavBar />
+        </>
     );
 }
 
@@ -147,7 +157,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: '100%',
         height: 170,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "#dfdfdf",
         borderRadius: 10,
     },
     sneakerImage: {
@@ -191,7 +201,7 @@ const styles = StyleSheet.create({
     itemContainer: {
         backgroundColor: "#f0f0f0",
         borderRadius: 100,
-        padding: 10,
+        padding: 9,
         marginRight: 10,
         display: 'flex',
         justifyContent: 'center',
@@ -199,7 +209,7 @@ const styles = StyleSheet.create({
     },
     image: {
         width: 33,
-        height: 30,
+        height: 32,
     }
 
 });
