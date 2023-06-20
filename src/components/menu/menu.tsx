@@ -1,18 +1,45 @@
-import React from "react";
-import { View, Dimensions, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Dimensions, Image, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import Bag from "react-native-vector-icons/Feather";
 import Bell from "react-native-vector-icons/Ionicons";
 
 const { width } = Dimensions.get('window');
 
-const Menu = () => {
+const Menu = ({ value, setValue }: any) => {
+
+    const [posicao] = useState(new Animated.Value(-3200))
+
+    useEffect(() => {
+
+        if (value == true) {
+            Animated.timing(
+                posicao,
+                {
+                    toValue: 0,
+                    duration: 400,
+                    useNativeDriver: true
+                }
+            ).start()
+        } else {
+            Animated.timing(
+                posicao,
+                {
+                    toValue: -3200,
+                    duration: 800,
+                    useNativeDriver: true
+                }
+            ).start()
+        }
+    }, [value])
+
+
     return (
-        <View style={styles.container}>
+        <Animated.View style={[styles.container, { transform: [{ translateX: posicao }] }]}>
             <Image source={require('../../../assets/shoes-background.png')} style={styles.backgroundImage} />
-            <View style={styles.closeButton}>
+            <TouchableOpacity onPress={() => setValue(false)} style={styles.closeButton}>
                 <Icon name="close" size={26} color={"#535252"} />
-            </View>
+            </TouchableOpacity>
             <View style={styles.menuContainer}>
                 <View style={styles.userInfoContainer}>
                     <Image source={require('../../../assets/user.png')} style={styles.userImage} />
@@ -23,23 +50,23 @@ const Menu = () => {
                 </View>
                 <View style={styles.menuItems}>
                     <TouchableOpacity style={styles.menuItem}>
-                        <Icon name="user" size={26} color={"#535252"} />
+                        <Icon name="user" size={23} color={"#535252"} />
                         <Text style={styles.menuText}>Perfil</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.menuItem}>
-                        <Icon name="shoppingcart" size={26} color={"#535252"} />
+                        <Icon name="shoppingcart" size={23} color={"#535252"} />
                         <Text style={styles.menuText}>Carrinho</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.menuItem}>
-                        <Bell name="notifications-outline" size={26} color={"#535252"} />
+                        <Bell name="notifications-outline" size={23} color={"#535252"} />
                         <Text style={styles.menuText}>Notificações</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.menuItem}>
-                        <Bag name="shopping-bag" size={26} color={"#535252"} />
+                        <Bag name="shopping-bag" size={23} color={"#535252"} />
                         <Text style={styles.menuText}>Compras</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.menuItem}>
-                        <Icon name="hearto" size={26} color={"#535252"} />
+                        <Icon name="hearto" size={23} color={"#535252"} />
                         <Text style={styles.menuText}>Favoritos</Text>
                     </TouchableOpacity>
                 </View>
@@ -48,7 +75,7 @@ const Menu = () => {
                     <Text style={styles.logoutText}>Log out</Text>
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 
@@ -79,9 +106,11 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: "#53525269",
         backgroundColor: "#f2f2f2",
+        borderRadius: 5,
         alignItems: "center",
         justifyContent: "center",
         width: 34,
+        marginLeft: 10,
         height: 34,
     },
     menuContainer: {
@@ -90,6 +119,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         elevation: 3,
         height: "80%",
+        alignSelf: "center",
         width: "90%",
     },
     userInfoContainer: {
@@ -114,7 +144,7 @@ const styles = StyleSheet.create({
         fontSize: 19,
     },
     userRole: {
-        fontWeight: "300",
+        fontWeight: "400",
         color: "#535252",
         fontSize: 16,
     },

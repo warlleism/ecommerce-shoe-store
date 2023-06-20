@@ -7,6 +7,7 @@ import LocaleScreen from '../../components/locale/locale';
 import NavBar from '../../components/navBar/navBar';
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../../components/menu/menu';
+import { inject, observer } from 'mobx-react';
 
 interface Sneaker {
     id: number;
@@ -17,11 +18,15 @@ interface Sneaker {
     category: string;
 }
 
-const HomeScreen = () => {
+const HomeScreen = ({ ProductRender, CartStore }: any) => {
+
+    const { detail, renderProduct } = ProductRender;
+    const { data } = CartStore;
 
     const [searchValue, setSearchValue] = useState<string>("");
     const [sneakers, setSneakers] = useState<Sneaker[]>(SneakersArray);
     const [filterSneakers, setFilterSneakers] = useState<Sneaker[]>([]);
+    const [showMenu, setShowMenu] = useState<boolean>(false)
     const navigation = useNavigation();
 
     const setFavorite = (event: boolean, id: number) => {
@@ -64,12 +69,10 @@ const HomeScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            {/* <Menu /> */}
-
             <ScrollView style={{ paddingHorizontal: 20, backgroundColor: "#fff" }}>
 
                 <View style={styles.header}>
-                    <TouchableOpacity style={styles.menuButton}>
+                    <TouchableOpacity style={styles.menuButton} onPress={() => setShowMenu(!showMenu)}>
                         <View style={styles.menuIcon} />
                         <View style={styles.menuIcon} />
                         <View style={styles.menuIcon} />
@@ -80,15 +83,17 @@ const HomeScreen = () => {
                         <Text style={{
                             textAlign: 'center',
                             fontWeight: "500",
+                            verticalAlign: 'middle',
                             width: 20,
+                            fontSize: 10,
                             height: 20,
                             position: 'absolute',
-                            top: -10,
+                            top: -13,
                             right: 0,
-                            backgroundColor: "#fd2e2e",
+                            backgroundColor: "#27875D",
                             borderRadius: 100,
                             color: "#fff"
-                        }}>1</Text>
+                        }}>{data.length}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -146,7 +151,10 @@ const HomeScreen = () => {
                             <View style={styles.sneakersContainer}>
                                 {filterSneakers.map((e: any) => {
                                     return (
-                                        <TouchableOpacity key={e.id} style={styles.sneakerItem}>
+                                        <TouchableOpacity key={e.id} style={styles.sneakerItem} onPress={() => {
+                                            renderProduct(e)
+                                            navigation.navigate("Detail" as never)
+                                        }}>
                                             <View style={styles.sneakerImageContainer}>
                                                 <Image source={e.img} style={styles.sneakerImage} />
                                                 {e.favorite === true ? (
@@ -169,7 +177,10 @@ const HomeScreen = () => {
                                 {sneakers.map((e: any) => {
                                     if (e.category && e.category.toLowerCase() === "new arrival") {
                                         return (
-                                            <TouchableOpacity key={e.id} style={styles.sneakerItem}>
+                                            <TouchableOpacity key={e.id} style={styles.sneakerItem} onPress={() => {
+                                                renderProduct(e)
+                                                navigation.navigate("Detail" as never)
+                                            }}>
                                                 <View style={styles.sneakerImageContainer}>
                                                     <Image source={e.img} style={styles.sneakerImage} />
                                                     {e.favorite === true ? (
@@ -189,7 +200,6 @@ const HomeScreen = () => {
                                                     )}
                                                 </View>
                                                 <Text style={styles.sneakerName}>{e.name}</Text>
-                                                <Text style={styles.sneakerName}>{e.category}</Text>
                                             </TouchableOpacity>
                                         );
                                     } else {
@@ -202,6 +212,7 @@ const HomeScreen = () => {
 
             </ScrollView>
             <NavBar />
+            <Menu value={showMenu} setValue={setShowMenu} />
         </View>
     );
 }
@@ -312,4 +323,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default HomeScreen;
+export default inject('ProductRender', 'CartStore')(observer(HomeScreen));

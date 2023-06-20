@@ -12,25 +12,35 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/screens/home/homeScreen';
 import ProductList from './src/screens/release-list/release-list';
+import { Provider } from 'mobx-react';
+import Stores from './src/store';
+import ProductRender from './src/screens/product-render/product-render'
 
 function Home() {
   return <HomeScreen />
 }
 
-function Product() {
+function AllProduct() {
   return <ProductList />
+}
+
+function Product() {
+  return <ProductRender />
 }
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="/" component={Home} />
-        <Stack.Screen name="ProductList" component={Product} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider {...Stores}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="/" component={Home} />
+          <Stack.Screen name="ProductList" component={AllProduct} />
+          <Stack.Screen name="Detail" component={Product} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
