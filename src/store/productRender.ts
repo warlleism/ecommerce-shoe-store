@@ -1,16 +1,8 @@
 import { makeObservable, observable, action } from "mobx";
-
-interface ICart {
-    img: string;
-    id: number;
-    name: string
-    price: number;
-    favorite: boolean;
-    category: string;
-}
+import { IProduct } from "../interfaces/IProduct";
 
 class CartStore {
-    detail: ICart[] = [];
+    detail: IProduct[] = [];
 
     constructor() {
         this.renderProduct = this.renderProduct.bind(this);
@@ -20,7 +12,7 @@ class CartStore {
         });
     }
 
-    renderProduct(obj: ICart) {
+    renderProduct(obj: IProduct) {
         this.detail = [obj];
     }
 }

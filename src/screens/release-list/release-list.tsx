@@ -1,7 +1,7 @@
 import { View, StyleSheet, TouchableOpacity, Image, Text, ScrollView, TextInput } from "react-native";
 import { SneakersArray } from "../../productData/productData";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 interface Sneaker {
@@ -65,9 +65,7 @@ const ProductList = () => {
                 <TouchableOpacity onPress={() => navigation.navigate("/" as never)}>
                     <Icon name="arrowleft" size={30} color={"#3d3d3d"} style={styles.favoriteIcon} />
                 </TouchableOpacity>
-
                 <Image source={require('../../../assets/logo.png')} />
-
                 <View></View>
             </View>
 

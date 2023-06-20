@@ -8,26 +8,21 @@ import NavBar from '../../components/navBar/navBar';
 import { useNavigation } from '@react-navigation/native';
 import Menu from '../../components/menu/menu';
 import { inject, observer } from 'mobx-react';
-
-interface Sneaker {
-    id: number;
-    img: string;
-    name: string;
-    price: number;
-    favorite: boolean;
-    category: string;
-}
+import { IProduct } from '../../interfaces/IProduct';
 
 const HomeScreen = ({ ProductRender, CartStore }: any) => {
 
-    const { detail, renderProduct } = ProductRender;
+    const { renderProduct } = ProductRender;
     const { data } = CartStore;
-
     const [searchValue, setSearchValue] = useState<string>("");
-    const [sneakers, setSneakers] = useState<Sneaker[]>(SneakersArray);
-    const [filterSneakers, setFilterSneakers] = useState<Sneaker[]>([]);
+    const [sneakers, setSneakers] = useState<IProduct[]>(SneakersArray);
+    const [filterSneakers, setFilterSneakers] = useState<IProduct[]>([]);
     const [showMenu, setShowMenu] = useState<boolean>(false)
     const navigation = useNavigation();
+
+    const filteredData = data.filter((e: any, index: number, self: any[]) => {
+        return index === self.findIndex((t: any) => t.id === e.id);
+    });
 
     const setFavorite = (event: boolean, id: number) => {
         setFilterSneakers((prevSneakers) => {
@@ -42,6 +37,7 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
             });
             return updatedSneakers;
         });
+
         setSneakers((prevSneakers) => {
             const updatedSneakers = prevSneakers.map((sneaker) => {
                 if (sneaker.id === id) {
@@ -68,8 +64,8 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
     };
 
     return (
-        <View style={{ flex: 1 }}>
-            <ScrollView style={{ paddingHorizontal: 20, backgroundColor: "#fff" }}>
+        <View style={{ flex: 1, backgroundColor: "#fff", }}>
+            <ScrollView style={{ paddingHorizontal: 20, marginTop: 10 }}>
 
                 <View style={styles.header}>
                     <TouchableOpacity style={styles.menuButton} onPress={() => setShowMenu(!showMenu)}>
@@ -78,7 +74,7 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
                         <View style={styles.menuIcon} />
                     </TouchableOpacity>
                     <Image source={require('../../../assets/logo.png')} />
-                    <TouchableOpacity style={styles.menuButton}>
+                    <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate("Cart" as never)}>
                         <Bag name="shopping-bag" size={23} color={"#262626"} style={styles.bagIcon} />
                         <Text style={{
                             textAlign: 'center',
@@ -93,7 +89,7 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
                             backgroundColor: "#27875D",
                             borderRadius: 100,
                             color: "#fff"
-                        }}>{data.length}</Text>
+                        }}>{filteredData.length}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -159,7 +155,7 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
                                                 <Image source={e.img} style={styles.sneakerImage} />
                                                 {e.favorite === true ? (
                                                     <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(false, e.id)}>
-                                                        <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                        <Icon name="heart" size={23} color={"#149a56"} style={styles.favoriteIcon} />
                                                     </TouchableOpacity>
                                                 ) : (
                                                     <TouchableOpacity style={styles.favoriteButton} onPress={() => setFavorite(true, e.id)}>
@@ -188,7 +184,7 @@ const HomeScreen = ({ ProductRender, CartStore }: any) => {
                                                             style={styles.favoriteButton}
                                                             onPress={() => setFavorite(false, e.id)}
                                                         >
-                                                            <Icon name="heart" size={23} color={"#FA1050"} style={styles.favoriteIcon} />
+                                                            <Icon name="heart" size={23} color={"#149a56"} style={styles.favoriteIcon} />
                                                         </TouchableOpacity>
                                                     ) : (
                                                         <TouchableOpacity

@@ -15,6 +15,7 @@ import ProductList from './src/screens/release-list/release-list';
 import { Provider } from 'mobx-react';
 import Stores from './src/store';
 import ProductRender from './src/screens/product-render/product-render'
+import CartList from './src/screens/cart-list/cart-list';
 
 function Home() {
   return <HomeScreen />
@@ -28,6 +29,10 @@ function Product() {
   return <ProductRender />
 }
 
+function Cart() {
+  return <CartList />
+}
+
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -38,6 +43,7 @@ function App() {
           <Stack.Screen name="/" component={Home} />
           <Stack.Screen name="ProductList" component={AllProduct} />
           <Stack.Screen name="Detail" component={Product} />
+          <Stack.Screen name="Cart" component={Cart} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
