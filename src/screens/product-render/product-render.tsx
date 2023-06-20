@@ -3,54 +3,16 @@ import { inject, observer } from "mobx-react";
 import { useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Icon from "react-native-vector-icons/AntDesign";
-import Menu from "react-native-vector-icons/Feather";
-import Bag from 'react-native-vector-icons/Feather';
+import Material from "react-native-vector-icons/MaterialCommunityIcons";
+import Feather from "react-native-vector-icons/Feather";
 
 const ProductRender = ({ ProductRender, CartStore }: any) => {
 
     const { addCart } = CartStore;
     const { detail, renderProduct } = ProductRender;
     const navigation = useNavigation();
+    const [sizeShoe, setSizeShoe] = useState()
     const [check, setCheck] = useState(false)
-    const [tamanhos, setTamanhos] = useState(
-        [
-            {
-                size: 39,
-                state: false
-            },
-            {
-                size: 41,
-                state: false
-            },
-            {
-                size: 42,
-                state: false
-            },
-            {
-                size: 45,
-                state: false
-            }
-        ]
-    )
-
-    const handlerSize = (size: number) => {
-        setTamanhos((prevSize) => {
-            const updatedSize = prevSize.map((sneaker) => {
-                if (sneaker.size === size) {
-                    return {
-                        ...sneaker,
-                        state: true,
-                    };
-                } else {
-                    return {
-                        ...sneaker,
-                        state: false,
-                    };
-                }
-            });
-            return updatedSize;
-        });
-    };
 
     return (
         <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -68,7 +30,7 @@ const ProductRender = ({ ProductRender, CartStore }: any) => {
                         backgroundColor: "#149a56",
                         borderRadius: 100
                     }}>
-                        <Icon name="check" size={23} color={"#fff"} style={styles.favoriteIcon} />
+                        <Material name="cart-arrow-up" size={23} color={"#fff"} style={styles.favoriteIcon} />
                     </View>
                     :
                     null
@@ -102,7 +64,7 @@ const ProductRender = ({ ProductRender, CartStore }: any) => {
                                     </TouchableOpacity>
                                     <Text style={{ fontSize: 18, fontWeight: "600", color: "#232323" }}>Detalhe Do Tênis</Text>
                                     <TouchableOpacity>
-                                        <Menu name="more-vertical" size={27} color={"#232323"} style={styles.favoriteIcon} />
+                                        <Feather name="more-vertical" size={27} color={"#232323"} style={styles.favoriteIcon} />
                                     </TouchableOpacity>
                                 </View>
                                 <Image source={e.img} style={{ alignSelf: "center", width: 300, height: 140, transform: [{ rotateZ: '-30deg' }] }} />
@@ -135,24 +97,34 @@ const ProductRender = ({ ProductRender, CartStore }: any) => {
                                 <View>
                                     <Text style={{ color: "#202020", fontWeight: "400", fontSize: 24, letterSpacing: -1 }}>Tamanho</Text>
                                     <View style={{ marginTop: 16, flexDirection: "row", justifyContent: "space-between" }}>
-                                        {tamanhos.map((e) => {
-                                            return (
-                                                <TouchableOpacity onPress={() => handlerSize(e.size)} key={e.size} style={{ width: "20%", padding: 5, borderWidth: 2, borderColor: "#149a56", backgroundColor: e.state ? "#149a56" : "transparent", borderRadius: 5 }}>
-                                                    <Text style={{ color: e.state ? "#fff" : "#149a56", fontWeight: "600", textAlign: "center" }}>{e.size}</Text>
-                                                </TouchableOpacity>
-                                            )
+                                        {[0, 1, 2, 3].map((index) => {
+                                            const size = e?.size[index];
+                                            if (size) {
+                                                return (
+                                                    <TouchableOpacity onPress={() => setSizeShoe(size)} key={`${e.size}_${index}`} style={{
+                                                        width: "20%",
+                                                        padding: 5,
+                                                        borderWidth: 2,
+                                                        borderColor: "#149a56",
+                                                        backgroundColor: sizeShoe === size ? "#149a56" : "transparent", borderRadius: 5
+                                                    }}>
+                                                        <Text style={{ color: sizeShoe === size ? "#fff" : "#149a56", fontWeight: "600", textAlign: "center" }}>{size}</Text>
+                                                    </TouchableOpacity>
+                                                );
+                                            }
+                                            return null;
                                         })}
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 16, marginBottom: 20 }}>
                                     <TouchableOpacity onPress={() => {
                                         setCheck(true)
-                                        addCart(e)
+                                        addCart({ ...e, size: [sizeShoe] })
                                         setTimeout(() => {
                                             setCheck(false)
                                         }, 2000)
                                     }} style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 5, width: "48%", padding: 10, borderColor: "#149a56", borderWidth: 2, borderRadius: 100 }}>
-                                        <Bag name="shopping-bag" size={25} color={"#149a56"} style={{ marginRight: 5 }} />
+                                        <Feather name="shopping-bag" size={25} color={"#149a56"} style={{ marginRight: 5 }} />
                                         <Text style={{ color: "#149a56", fontWeight: "600", textAlign: "center" }}>Add Carrinho</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 5, width: "48%", padding: 10, backgroundColor: "#149a56", borderRadius: 100 }}>

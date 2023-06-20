@@ -7,4 +7,9 @@ export interface IProduct {
     category: string;
     stoq: number;
     sale: number;
+    serial: string;
+    color: string;
+    qtd: number;
+    fixprice: number;
+    size: number[]
 }
